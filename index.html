@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>JUMC NEXT Content Planner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F5F6FA;--card:#fff;--ink:#1C2038;--mute:#626782;--line:#E0E3EE;--pink:#D81B7A;--on-pink:#fff;
+--aw:#2F62D6;--co:#7A3FC9;--cv:#D81B7A;--ex:#1B8F63;--pr:#9A6410;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#13152A;--card:#1C2040;--ink:#EDEEF7;--mute:#9EA3C4;--line:#303560;--pink:#FF5FA8;--on-pink:#1C0F18;--aw:#7CA2FF;--co:#B796FF;--cv:#FF7FB9;--ex:#4FD1A0;--pr:#E8B45A;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#13152A;--card:#1C2040;--ink:#EDEEF7;--mute:#9EA3C4;--line:#303560;--pink:#FF5FA8;--on-pink:#1C0F18;--aw:#7CA2FF;--co:#B796FF;--cv:#FF7FB9;--ex:#4FD1A0;--pr:#E8B45A;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans Thai",system-ui,sans-serif;line-height:1.6;font-size:15px}
+.wrap{max-width:900px;margin:0 auto;padding:20px 16px 80px}
+h1{font-size:26px;font-weight:800;margin:0 0 2px;letter-spacing:-.01em}
+.sub{color:var(--mute);margin:0 0 18px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:14px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.stat b{display:block;font-size:22px;font-weight:800}
+.stat span{color:var(--mute);font-size:13px}
+.strip{display:flex;gap:3px;margin:0 0 6px}
+.strip i{flex:1;height:14px;border-radius:3px;background:var(--line);cursor:pointer;border:0;padding:0}
+.strip i[data-s="4"]{background:var(--ex)}
+.strip i[data-s="3"]{background:var(--pink)}
+.strip i[data-s="2"],.strip i[data-s="1"]{background:var(--pr)}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:12.5px;color:var(--mute);margin-bottom:18px}
+.legend em{font-style:normal;display:inline-flex;align-items:center;gap:5px}
+.legend em::before{content:"";width:10px;height:10px;border-radius:2px;background:var(--line)}
+.legend .l4::before{background:var(--ex)}.legend .l3::before{background:var(--pink)}.legend .l2::before{background:var(--pr)}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px}
+.chip{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:5px 14px;font:inherit;font-size:13.5px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn{font:inherit;font-weight:700;border-radius:8px;padding:8px 14px;border:1px solid var(--pink);background:var(--pink);color:var(--on-pink);cursor:pointer}
+.btn.ghost{background:transparent;color:var(--pink)}
+.btn.danger{border-color:#C0392B;color:#C0392B;background:transparent}
+.sp{flex:1}
+h2{font-size:15px;font-weight:700;color:var(--mute);margin:22px 0 8px}
+.item{display:grid;grid-template-columns:64px 1fr;gap:12px;width:100%;text-align:left;font:inherit;color:inherit;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--c,var(--line));border-radius:10px;padding:12px;margin-bottom:8px;cursor:pointer}
+.item:hover{border-color:var(--pink)}
+.d{font-weight:800;line-height:1.15;text-align:center}
+.d small{display:block;font-weight:500;color:var(--mute);font-size:12px}
+.d b{font-size:24px}
+.t{font-weight:700}
+.meta{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 8px;font-size:12.5px;color:var(--mute)}
+.tag{color:var(--c);background:color-mix(in srgb,var(--c) 14%,transparent);border-radius:5px;padding:0 8px;font-weight:700}
+.prog{height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.prog i{display:block;height:100%;background:var(--ex)}
+.empty{color:var(--mute);padding:30px 0;text-align:center}
+.ov{position:fixed;inset:0;background:rgba(10,12,30,.5);display:none;z-index:20}
+.ov.on{display:block}
+.pan{position:absolute;top:0;right:0;bottom:0;width:min(520px,100%);background:var(--bg);overflow-y:auto;padding:calc(18px + env(safe-area-inset-top,0px)) 18px calc(30px + env(safe-area-inset-bottom,0px));border-left:1px solid var(--line)}
+.pan h3{margin:0;font-size:18px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label{display:block;font-size:13px;font-weight:700;color:var(--mute);margin:12px 0 4px}
+input,select,textarea{width:100%;font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+textarea{min-height:110px;resize:vertical}
+input[type=range]{padding:0;accent-color:var(--pink)}
+:focus-visible{outline:2px solid var(--pink);outline-offset:2px}
+.sec{margin-top:20px;padding-top:6px;border-top:1px solid var(--line);font-weight:800}
+.acts{display:flex;gap:8px;margin-top:20px}
+@media (max-width:520px){.item{grid-template-columns:50px 1fr}.row{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+:root:root:root{--bg:#07070C;--card:#12121B;--ink:#F3F4FA;--mute:#9A9DB5;--line:#26263A;--pink:#FF4FA3;--on-pink:#14000B;--blue:#3DA9FF;--aw:#3DA9FF;--co:#8F9BFF;--cv:#FF4FA3;--ex:#FF9BCB;--pr:#A9B0C8;color-scheme:dark}
+:root:root[data-theme="light"]{--bg:#F6F7FB;--card:#FFFFFF;--ink:#12131F;--mute:#5C6080;--line:#DDE0EE;--pink:#D81B7A;--on-pink:#FFFFFF;--blue:#1473D6;--aw:#1473D6;--co:#5A55D6;--cv:#D81B7A;--ex:#E0589F;--pr:#6A7090;color-scheme:light}
+.top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.top .chip{white-space:nowrap;flex:none}
+h1{background:linear-gradient(90deg,var(--pink),var(--blue));-webkit-background-clip:text;background-clip:text;color:transparent}
+.stat b{color:var(--blue)}
+.chip[aria-pressed="true"]{background:var(--pink);border-color:var(--pink);color:var(--on-pink)}
+.strip i[data-s="4"]{background:var(--blue)}
+.strip i[data-s="2"],.strip i[data-s="1"]{background:var(--co)}
+.legend .l4::before{background:var(--blue)}
+.legend .l2::before{background:var(--co)}
+.prog i{background:linear-gradient(90deg,var(--pink),var(--blue))}
+.cg{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-top:10px}
+.cw{font-size:12px;color:var(--mute);text-align:center;padding:4px 0;font-weight:700}
+.cd{min-height:90px;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:4px;position:relative;overflow:hidden}
+.cd.o{background:transparent;border-color:transparent}
+.cd>b{font-size:12px;color:var(--mute);font-weight:700}
+.plus{position:absolute;top:2px;right:3px;width:22px;height:22px;line-height:20px;padding:0;border:0;border-radius:5px;background:transparent;color:var(--mute);cursor:pointer;font-size:15px}
+.plus:hover{color:var(--pink)}
+.ev.sh{background:transparent;border:1px dashed var(--blue);border-left:3px solid var(--blue)}
+.dn{border:0;background:transparent;color:var(--mute);font:inherit;font-size:12px;font-weight:700;cursor:pointer;padding:0 4px;border-radius:4px}
+.dn:hover{color:var(--ink);background:var(--line)}
+.ml{font-size:10.5px;font-weight:700;margin-left:2px}
+.cd.m-class{background:color-mix(in srgb,var(--blue) 16%,var(--card));border-color:var(--blue)}
+.cd.m-trip{background:color-mix(in srgb,var(--pink) 16%,var(--card));border-color:var(--pink)}
+.m-class .ml{color:var(--blue)}.m-trip .ml{color:var(--pink)}
+.cd.dov{outline:2px dashed var(--pink)}
+.legend .lc::before{background:var(--blue)}.legend .lt::before{background:var(--pink)}.legend .ls::before{background:transparent;border:1px dashed var(--blue)}
+.legend{margin:10px 0 0}
+.idea{display:grid;grid-template-columns:24px 1fr;gap:8px;align-items:start;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px;margin-bottom:8px}
+.grip{cursor:grab;color:var(--mute);text-align:center;user-select:none;padding-top:6px;font-size:18px}
+.idea textarea{min-height:46px;height:46px}
+.ia{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:6px}
+.ia input,.ia select{width:auto}
+.btn.sm{padding:4px 10px;font-size:13px}
+:root:root:root{--purple:#B07CFF}
+:root:root[data-theme="light"]{--purple:#7A3FC9}
+.cd.m-event{background:color-mix(in srgb,var(--purple) 18%,var(--card));border-color:var(--purple)}
+.m-event .ml{color:var(--purple)}
+.legend .le::before{background:var(--purple)}
+.ev[draggable]{cursor:grab}
+.tt{display:flex;align-items:center;gap:10px}
+.logo{font-size:30px;line-height:1}
+.goal{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:14px;background:var(--card) linear-gradient(135deg,color-mix(in srgb,var(--pink) 10%,transparent),color-mix(in srgb,var(--blue) 10%,transparent))}
+.gl-top{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center}
+.gl-t{font-weight:800}
+.gl-e{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--mute);margin:0;font-weight:500}
+.gl-e input{width:96px;padding:4px 8px}
+.gl-n{margin:6px 0 8px;font-size:15px}
+.gl-n b{font-size:30px;font-weight:800;color:var(--blue)}
+.gl-bar{height:14px;border-radius:7px;background:var(--line);overflow:hidden}
+.gl-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--pink),var(--blue));transition:width .4s}
+.gl-ms{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;font-size:12.5px}
+.ms{color:var(--mute);border:1px dashed var(--line);border-radius:999px;padding:0 8px}
+.ms.on{color:var(--ink);border:1px solid var(--pink);background:color-mix(in srgb,var(--pink) 14%,transparent)}
+.gl-note{color:var(--mute);font-size:12.5px;margin-top:6px}
+.cd{padding-bottom:22px}
+#chips{display:none!important}
+:root:root:root{--hol:#FFC247}
+:root:root[data-theme="light"]{--hol:#B26A00}
+.hl{font-size:10.5px;font-weight:700;color:var(--hol);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.cd.hol{border-top:2px solid var(--hol)}
+.cd.hol>.dn{color:var(--hol)}
+.io{margin:0 0 12px}
+.io .chip{font-size:13px}
+.legend .lh::before{background:var(--hol)}
+.ap{position:absolute;right:4px;bottom:3px;font-size:11px;font-weight:700;line-height:1.5;padding:0 7px;border-radius:999px;color:var(--blue);background:color-mix(in srgb,var(--blue) 15%,transparent)}
+.ev{display:block;width:100%;text-align:left;font:inherit;font-size:11.5px;line-height:1.3;color:var(--ink);background:color-mix(in srgb,var(--c) 24%,transparent);border:0;border-left:3px solid var(--c);border-radius:4px;padding:2px 4px;margin-top:3px;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (max-width:520px){.cd{min-height:66px}.ev{font-size:10px;padding:1px 3px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <noscript><div style="padding:12px;margin:12px 0;border:2px solid #D81B7A;border-radius:10px;background:#fff;color:#1C2038;font-family:sans-serif"><b>⚠️ หน้านี้ถูกเปิดในมุมมองที่ไม่รันสคริปต์ (เช่น พรีวิวไฟล์) จึงกดปุ่มไม่ได้</b><br>เปิดเวอร์ชันเว็บเพื่อดูและแก้ไข: <a href="https://claude.ai/artifact/QKZH2mGQFT8VBtrfwvj2eS">เปิดเว็บ JUMC NEXT Planner</a><ul><li>2026-11-13 · วันถ่ายที่ JUMC trip</li><li>2027-01-08 · 🖼️ JUMC NEXT 20 is Coming Your Way! </li><li>2027-01-11 · ✨ 5 เรื่องต้องรู้ก่อนสมัคร JUMC Next ✨</li><li>2027-01-15 · 🖼️ ทำไมถึงต้องเรียน JUMC?</li><li>2027-01-16 · 🖼️ JUMC Next 20 Early Bird Promotion</li><li>2027-01-16 · ✍️ เปิดรับสมัครวันแรก</li><li>2027-01-18 · 📱 JUMC คืออะไร เรียนแล้วได้อะไร เหมาะกับใคร</li><li>2027-01-25 · 📱 ก่อน-หลัง เรียน jumc มีอะไรเปลี่ยนไปบ้าง ?</li><li>2027-01-29 · เรียน JUMC แล้วได้อะไรบ้าง มีกิจกรรมอะไรบ้าง</li><li>2027-02-01 · 📱 สิ่งที่คุณประทับใจที่ได้มาเรียน jumc ?</li><li>2027-02-08 · 📱 เรียนจบจากที่ไหน ตอนนี้ทำงานอะไรอยู่</li><li>2027-02-12 · 🖼️ รีวิวคอร์สและการป้ายยาจากใจรุ่นพี่ 1</li><li>2027-02-15 · 📱 คุ้มไหมกับ 1 เดือนเต็มที่มาเรียน jumc เพราะอะไร ?</li><li>2027-02-20 · 📅 กำหนดการรับสมัคร JUMC Next</li><li>2027-02-22 · 📱 คุณคือ ... คุณได้อะไรจากการมาเรียน jumc ?</li><li>2027-02-26 · 🖼️ รีวิวคอร์สและการป้ายยาจากใจรุ่นพี่ 2</li><li>2027-03-01 · 📱 class ที่ชอบ / ประทับใจที่สุด เพราะอะไร</li><li>2027-03-05 · 🖼️ เค้าดาว 10 วัน</li><li>2027-03-06 · 🖼️ เค้าดาว 9 วัน</li><li>2027-03-07 · 🖼️ เค้าดาว 8 วัน</li><li>2027-03-08 · 🖼️ เค้าดาว 7 วัน</li><li>2027-03-09 · 🖼️ เค้าดาว 6 วัน</li><li>2027-03-10 · 🖼️ เค้าดาว 5 วัน</li><li>2027-03-11 · 🖼️ เค้าดาว 4 วัน</li><li>2027-03-12 · 🖼️ เค้าดาว 3 วัน</li><li>2027-03-13 · 🖼️ เค้าดาว 2 วัน</li><li>2027-03-14 · 🖼️ เค้าดาว 1 วัน</li><li>2027-03-15 · 🖼️ ปิดรับสมัคร JUMC</li><li>2027-03-22 · 📢 ประกาศรายชื่อผู้มีสิทธิ์เข้าสอบข้อเขียน</li><li>2027-03-23 · ✏️ เตรียมตัวอย่างไรสำหรับการสอบข้อเขียน JUMC NEXT</li><li>2027-03-23 · 📍 แผนที่สถานที่สอบข้อเขียน JUMC NEXT</li><li>2027-03-26 · 📢 Reminder  พรุ่งนี้คือวันสอบข้อเขียนของโครงการ JUMC NEXT 🩷🩵</li><li>2027-03-27 · 🩷🩵วันสอบข้อเขียนของโครงการ JUMC NEXT 🩷🩵</li><li>2027-04-30 · 🚨 ประกาศรายชื่อผู้มีสิทธิ์เข้าสอบสัมภาษณ์&quot; </li><li>2027-05-07 · Reminder วันสอบสัมภาษณ์</li><li>2027-05-08 · วันสอบสัมภาษณ์ของโครงการ JUMC NEXT</li><li>2027-05-09 · วันสอบสัมภาษณ์ของโครงการ JUMC NEXT</li><li>2027-05-22 · 🎉ประกาศรายชื่อผู้มีสิทธิ์เข้าร่วมโครงการ JUMC Next รุ่น 20</li><li>2027-05-28 · วันสุดท้าย ยืนยันสิทธิ์เข้าร่วม</li><li>2027-06-25 · ✍️ REMIND first meet JUMC 20</li><li>2027-06-26 · First Meet สำหรับ JUMC Next รุ่น 20</li></ul></div></noscript>
+  <div class="top"><div class="tt"><span class="logo">🎓</span><h1>JUMC NEXT Content Planner</h1></div><button class="chip" id="th" type="button"></button></div>
+  <p class="sub">📅 แผนคอนเทนต์ ม.ค. ถึง ก.ค. กดที่แต่ละรายการเพื่อดูและแก้รายละเอียด ใส่ผลลัพธ์ และอัปเดตความคืบหน้า</p>
+  <div class="bar io" id="io"><button class="chip" id="b-html" type="button">💾 ส่งออก HTML (พร้อมข้อมูล)</button><button class="chip" id="b-json" type="button">⬇️ สำรองข้อมูล JSON</button><button class="chip" id="b-imp" type="button">⬆️ นำเข้าข้อมูล</button><input type="file" id="f-imp" accept=".json,application/json" hidden><span id="io-msg" class="sub" style="margin:0"></span></div>
+  <div class="goal" id="goal"></div>
+  <div class="stats" id="stats"></div>
+  <div class="strip" id="strip" aria-label="ความคืบหน้าแต่ละคอนเทนต์"></div>
+  <div class="legend"><em class="l4">✅ ลงแล้ว</em><em>⏳ ยังไม่ได้ลง</em></div>
+  <div class="bar"><button class="chip" id="vl" aria-pressed="true">📋 รายการ</button><button class="chip" id="vc" aria-pressed="false">🗓️ ปฏิทิน 2027</button></div>
+  <div class="bar" id="chips"></div>
+  <div class="bar"><select id="st" style="width:auto" aria-label="กรองสถานะ"></select><span class="sp"></span><button class="btn" id="add">➕ เพิ่มคอนเทนต์</button></div>
+  <div id="cal" hidden></div>
+  <div id="list"></div>
+</div>
+<div class="ov" id="ov"><div class="pan" id="pan" role="dialog" aria-modal="true" aria-label="รายละเอียดคอนเทนต์"></div></div>
+
+<script type="application/json" id="embedded">{"v":1,"savedAt":1794304238143,"items":[{"id":"izw8hh19","date":"2026-11-13","title":"วันถ่ายที่ JUMC trip","phase":"pr","pillar":"อยากมา","platform":"","status":0,"progress":0,"detail":"","views":"","saves":"","clicks":"","leads":"","note":"","shootTo":"2026-11-15","shootFrom":"2026-11-13"},{"id":"ifat20sr","date":"2027-03-15","title":"ปิดรับสมัคร JUMC","phase":"aw","pillar":"อยากมา","platform":"","status":0,"progress":0,"detail":"","views":"","saves":"","clicks":"","leads":"","note":"","ctype":"โพสต์ภาพ"},{"id":"i4ew4bb3","date":"2027-03-14","title":"เค้าดาว 1 วัน","phase":"aw","pillar":"อยากมา","platform":"","status":0,"progress":0,"detail":"","views":"","saves":"","clicks":"","leads":"","note":"","ctype":"โพสต์ภาพ"},{"id":"ij3hp2kx","date":"2027-03-13","title":"เค้าดาว 2 วัน","phase":"aw","pillar":"อยากมา","platform":"","status":0,"progress":0,"detail":"","views":"","saves":"","clicks":"","leads":"","note":"","ctype":"โพสต์ภาพ"},{"id":"i6pdc017","date":"2027-03-12","title":"เค้าดาว 3 วัน","phase":"aw","pillar":"อยากมา","platform":"","status":0,"progress":0,"detail":"","views":"","saves":"","clicks":"","leads":"","note":"","ctype":"โพสต์ภาพ"},{"id":"ifctxp1p","date":"2027-03-11","title":"เค้าดาว 4 วัน","phase":"aw","pillar":"อยากมา","platform":"","status":0,"progress":0,"detail":"","views":"","saves":"","clicks":"","leads":"","note":"","ctype":"โพสต์ภาพ"},{"id":"ij3ci7rt","date":"2027-03-10","title":"เค้าดาว 5 วัน","phase":"aw","pillar":"อยากมา","platform":"","status":0,"progress":0,"detail":"","views":"","saves":"","clicks":"","leads":"","note":"","ctype":"โพสต์ภาพ"},{"id":"i4vftosy","date":"2027-03-09","title":"เค้าดาว 6 วัน","phase":"aw","pillar":"อยากมา","platform":"","status":0,"progress":0,"detail":"","views":"","saves":"","clicks":"","leads":"","note":"","ctype":"โพสต์ภาพ"},{"id":"i3wxcu2h","date":"2027-03-08","title":"เค้าดาว 7 วัน","phase":"aw","pillar":"อยากมา","platform":"","status":0,"progress":0,"detail":"","views":"","saves":"","clicks":"","leads":"","note":"","ctype":"โพสต์ภาพ"},{"id":"iqy3stzt","date":"2027-03-07","title":"เค้าดาว 8 วัน","phase":"aw","pillar":"อยากมา","platform":"","status":0,"progress":0,"detail":"","views":"","saves":"","clicks":"","leads":"","note":"","ctype":"โพสต์ภาพ"},{"id":"iy161rmm","date":"2027-03-06","title":"เค้าดาว 9 วัน","phase":"aw","pillar":"อยากมา","platform":"","status":0,"progress":0,"detail":"","views":"","saves":"","clicks":"","leads":"","note":"","ctype":"โพสต์ภาพ"},{"id":"i6o173pw","date":"2027-03-05","title":"เค้าดาว 10 วัน","phase":"aw","pillar":"อยากมา","platform":"","status":0,"progress":0,"detail":"","views":"","saves":"","clicks":"","leads":"","note":"","ctype":"โพสต์ภาพ"},{"id":"irdojqla","date":"2027-03-22","title":"📢 ประกาศรายชื่อผู้มีสิทธิ์เข้าสอบข้อเขียน","phase":"aw","pillar":"อยากมา","platform":"","status":0,"progress":0,"detail":"","views":"","saves":"","clicks":"","leads":"","note":""},{"id":"iylg994q","date":"2027-03-23","title":"✏️ เตรียมตัวอย่างไรสำหรับการสอบข้อเขียน JUMC NEXT","phase":"aw","pillar":"อยากมา","platform":"","status":0,"progress":0,"detail":".\n📌 การสอบข้อเขียนจะประกอบด้วย\n✔ Multiple Choice\n✔ Business Case Analysis\n.\nโดยการสอบมีวัตถุประสงค์​ เพื่อประเมิน\n• ความรู้ทั่วไป\n• การคิดเชิงธุรกิจ\n• การวิเคราะห์สถานการณ์\n• การสื่อสารความคิดอย่างเป็นระบบ\n_______\n.\n📌 สิ่งที่ต้องเตรียมมาในวันสอบข้อเขียน JUMC NEXT\n✔ บัตรประชาชน (หรือเอกสารอื่นๆที่สามารถยืนยันตัวตนได้)\n✔ ปากกา / ปากกาลบคำผิด (สามารถใช้ดินสอเขียนทดได้ แต่ไม่อนุญาตให้ใช้เขียนตอบข้อสอบ)\n✔ ความพร้อมในการทำข้อสอบและการแต่งกายที่เหมาะสม\n.\n.\n🚨 การเตรียมตัวสำหรับสอบข้อเขียนและคำถามที่พบบ่อย\n1. เนื้อหาการสอบเป็นความรู้ทั่วไปและเนื้อหาเบื้องต้นเกี่ยวกับธุรกิจ\n2. กรุณานำเครื่องเขียนมาให้พร้อม เช่น ปากกา ปากกาลบคำผิด\n3. กรุณาแต่งกายสุภาพ โดยงดสวมกางเกงขาสั้นหรือขาสามส่วน รวมถึงกระโปรงสั้นและเสื้อแขนกุด รองเท้าแตะหรือรองเท้าไม่หุ้มส้น และสามารถพกเสื้อกันหนาวมาเผื่อได้\n4. ไม่อนุญาตให้ใช้โทรศัพท์มือถือ กรุณาปิดเครื่องมือสื่อสาร และงดใช้อุปกรณ์อิเล็กทรอนิกส์ทุกชนิด หากมีการทุจริตทางคณะกรรมการขออนุญาตตัดสิทธิสอบ และเชิญออกจากห้องสอบโดยทันที\n5. ทางโครงการไม่มีพื้นที่ฝากสัมภาระ สามารถวางไว้ข้างตัวได้ขณะทำข้อสอบ จึงขอความร่วมมือนำมาเฉพาะสิ่งของที่จำเป็นเท่านั้น\n6. สามารถนำน้ำเปล่า หรือขวดน้ำที่มีฝาปิดเข้าห้องสอบได้ แต่ไม่อนุญาตให้นำแก้วน้ำและอาหารเข้าห้องสอบ\n7. ระหว่างการสอบผู้สมัครจะไม่สามารถออกมาเข้าห้องน้ำได้\n8. สามารถจอดรถได้ที่ อาคารจอดรถคณะอักษรศาสตร์ อาคารจอดรถคณะรัฐศาสตร์ อาคารจามจุรีสแควร์ หรือ ศูนย์การค้าสามย่านมิตรทาวน์ (มีค่าที่จอดรถ)\n9. หากเดินทางโดยรถไฟฟ้าใต้ดิน MRT สามารถลงได้ที่ สถานีสามย่าน หรือ BTS ลงสถานีสยาม โดยต่อรถมาที่อาคารมหิตลาธิเบศร\n.\n.\nขอให้น้อง ๆ ทุกคนโชคดีในวันสอบ\nและแสดงศักยภาพของตัวเองออกมาอย่างเต็มที่✨\n#JUMCNEXT #JUMCNEXT19 #JUMC #MBA","views":"","saves":"","clicks":"","leads":"","note":""},{"id":"iyao0xg3","date":"2027-03-23","title":"📍 แผนที่สถานที่สอบข้อเขียน JUMC NEXT","phase":"aw","pillar":"อยากมา","platform":"","status":0,"progress":0,"detail":"โปรดตรวจสอบสถานที่สอบและเส้นทางล่วงหน้า เพื่อความสะดวกในวันสอบ\n📅 วันสอบ : 28 มีนาคม 2569 (เปิดเริ่มลงทะเบียน 13:30-14:00)\nอาคารมหิตลาธิเบศร จุฬาลงกรณ์มหาวิทยาลัย\n.\nแนะนำให้น้อง ๆ เดินทางมาถึงก่อนเวลาประมาณ 15-30 นาที\nเพื่อทำการลงทะเบียนและเตรียมตัวก่อนเข้าสอบ\n*กรุณาเผื่อเวลาเดินทาง กรณีการจราจรติดขัด\n#JUMCNEXT #JUMCNEXT19 #JUMC #MBA","views":"","saves":"","clicks":"","leads":"","note":""},{"id":"is8a2ztt","date":"2027-03-26","title":"📢 Reminder  พรุ่งนี้คือวันสอบข้อเขียนของโครงการ JUMC NEXT 🩷🩵","phase":"aw","pillar":"อยากมา","platform":"","status":0,"progress":0,"detail":"อย่าลืมตรวจสอบ\n✔ รายชื่อผู้มีสิทธิ์สอบ\n✔ สถาน-เวลาที่สอบ\n✔ สิ่งที่ต้องเตรียมมา\n.\n🚨 การเตรียมตัวสำหรับสอบข้อเขียนและคำถามที่พบบ่อย\n1. เนื้อหาการสอบเป็นความรู้ทั่วไปและเนื้อหาเบื้องต้นเกี่ยวกับธุรกิจ\n2. กรุณานำเครื่องเขียนมาให้พร้อม เช่น ปากกา ปากกาลบคำผิด\n3. กรุณาแต่งกายสุภาพ โดยงดสวมกางเกงขาสั้นหรือขาสามส่วน รวมถึงกระโปรงสั้นและเสื้อแขนกุด รองเท้าแตะหรือรองเท้าไม่หุ้มส้น และสามารถพกเสื้อกันหนาวมาเผื่อได้\n4. ไม่อนุญาตให้ใช้โทรศัพท์มือถือ กรุณาปิดเครื่องมือสื่อสาร และงดใช้อุปกรณ์อิเล็กทรอนิกส์ทุกชนิด หากมีการทุจริตทางคณะกรรมการขออนุญาตตัดสิทธิสอบ และเชิญออกจากห้องสอบโดยทันที\n5. ทางโครงการไม่มีพื้นที่ฝากสัมภาระ สามารถวางไว้ข้างตัวได้ขณะทำข้อสอบ จึงขอความร่วมมือนำมาเฉพาะสิ่งของที่จำเป็นเท่านั้น\n6. สามารถนำน้ำเปล่า หรือขวดน้ำที่มีฝาปิดเข้าห้องสอบได้ แต่ไม่อนุญาตให้นำแก้วน้ำและอาหารเข้าห้องสอบ\n7. ระหว่างการสอบผู้สมัครจะไม่สามารถออกมาเข้าห้องน้ำได้\n8. สามารถจอดรถได้ที่ อาคารจอดรถคณะอักษรศาสตร์ อาคารจอดรถคณะรัฐศาสตร์ อาคารจามจุรีสแควร์ หรือ ศูนย์การค้าสามย่านมิตรทาวน์ (มีค่าที่จอดรถ)\n9. หากเดินทางโดยรถไฟฟ้าใต้ดิน MRT สามารถลงได้ที่ สถานีสามย่าน หรือ BTS ลงสถานีสยาม โดยต่อรถมาที่อาคารมหิตลาธิเบศร\n.\n⚠️ กรุณามาก่อนเวลานัดหมาย 15-30 นาที และขอสงวนสิทธิในการให้เข้าห้องสอบ สำหรับผู้มาสายหลังจากที่คณะกรรมการเริ่มแจกข้อสอบแล้ว\n.\nขอให้น้อง ๆ ทุกคนโชคดีในการสอบ ✨\n.\n#JUMCNEXT #JUMCNEXT19 #JUMC #MBA","views":"","saves":"","clicks":"","leads":"","note":""},{"id":"iuy0b7i7","date":"2027-03-27","title":"🩷🩵วันสอบข้อเขียนของโครงการ JUMC NEXT 🩷🩵","phase":"aw","pillar":"อยากมา","platform":"","status":0,"progress":0,"detail":"","views":"","saves":"","clicks":"","leads":"","note":""},{"id":"iyppk6vt","date":"2027-04-30","title":"🚨 ประกาศรายชื่อผู้มีสิทธิ์เข้าสอบสัมภาษณ์\" ","phase":"aw","pillar":"อยากมา","platform":"","status":0,"progress":0,"detail":"","views":"","saves":"","clicks":"","leads":"","note":""},{"id":"i5g8xl61","date":"2027-05-08","title":"วันสอบสัมภาษณ์ของโครงการ JUMC NEXT","phase":"aw","pillar":"อยากมา","platform":"","status":0,"progress":0,"detail":"","views":"","saves":"","clicks":"","leads":"","note":""},{"id":"igj19jhg","date":"2027-05-09","title":"วันสอบสัมภาษณ์ของโครงการ JUMC NEXT","phase":"aw","pillar":"อยากมา","platform":"","status":0,"progress":0,"detail":"","views":"","saves":"","clicks":"","leads":"","note":""},{"id":"igzo7wqi","date":"2027-05-07","title":"Reminder วันสอบสัมภาษณ์","phase":"aw","pillar":"อยากมา","platform":"","status":0,"progress":0,"detail":"","views":"","saves":"","clicks":"","leads":"","note":""},{"id":"ibeeihwj","date":"2027-05-22","title":"🎉ประกาศรายชื่อผู้มีสิทธิ์เข้าร่วมโครงการ JUMC Next รุ่น 20","phase":"aw","pillar":"อยากมา","platform":"","status":0,"progress":0,"detail":"","views":"","saves":"","clicks":"","leads":"","note":""},{"id":"iy9qpur2","date":"2027-05-28","title":"วันสุดท้าย ยืนยันสิทธิ์เข้าร่วม","phase":"aw","pillar":"อยากมา","platform":"","status":0,"progress":0,"detail":"","views":"","saves":"","clicks":"","leads":"","note":""},{"id":"io5myd71","date":"2027-06-26","title":"First Meet สำหรับ JUMC Next รุ่น 20","phase":"aw","pillar":"อยากมา","platform":"","status":0,"progress":0,"detail":"","views":"","saves":"","clicks":"","leads":"","note":""},{"id":"i4i2h1rk","date":"2027-02-08","title":"เรียนจบจากที่ไหน ตอนนี้ทำงานอะไรอยู่","phase":"aw","pillar":"อยากมา","platform":"","status":0,"progress":0,"detail":"5 คน\n1.\n2.\n3.\n4.\n5.\n\n1.แนะนำตัว\n2.จบคณะไหน ม.ไหน\n3.ตอนนี้ทำอะไรอยู่","views":"","saves":"","clicks":"","leads":"","note":"","ctype":"คลิปสั้น"},{"id":"i013iu2k","date":"2027-02-01","title":"สิ่งที่คุณประทับใจที่ได้มาเรียน jumc ?","phase":"aw","pillar":"อยากมา","platform":"","status":0,"progress":0,"detail":"5 คน\n1.\n2.\n3.\n4.\n5.\n\n1.แนะนำตัว\n2.สิ่งที่ประทับใจ","views":"","saves":"","clicks":"","leads":"","note":"","ctype":"คลิปสั้น"},{"id":"irq1ssi9","date":"2027-02-15","title":"คุ้มไหมกับ 1 เดือนเต็มที่มาเรียน jumc เพราะอะไร ?","phase":"aw","pillar":"อยากมา","platform":"","status":0,"progress":0,"detail":"3 คน\n1.\n2.\n3.\n\n1.แนะนำตัว\n2.เล่าความคาดหวัง และความคุ้มว่ามันคุ้มยังไง","views":"","saves":"","clicks":"","leads":"","note":"","ctype":"คลิปสั้น"},{"id":"ilwkbfdy","date":"2027-01-18","title":"JUMC คืออะไร เรียนแล้วได้อะไร เหมาะกับใคร","phase":"aw","pillar":"อยากมา","platform":"","status":0,"progress":0,"detail":"พลอย ประธาน\n\nพูด + อินเสจคลิป\n\n1.แนะนำตัว\n2.JUMC คืออะไร\n3.ภายในมีอะไร\n4.เรียนแล้วได้อะไร\n5.ใครสมัครได้บ้าง","views":"","saves":"","clicks":"","leads":"","note":"","ctype":"คลิปสั้น"},{"id":"ijt1xngs","date":"2027-01-08","title":"JUMC NEXT 20 is Coming Your Way! ","phase":"aw","pillar":"อยากมา","platform":"","status":0,"progress":0,"detail":"","views":"","saves":"","clicks":"","leads":"0","note":"","ctype":"โพสต์ภาพ"},{"id":"i073wmpa","date":"2027-01-16","title":"JUMC Next 20 Early Bird Promotion","phase":"aw","pillar":"อยากมา","platform":"","status":0,"progress":0,"detail":"","views":"","saves":"","clicks":"","leads":"","note":"","ctype":"โพสต์ภาพ"},{"id":"imunz49c","date":"2027-02-20","title":"📅 กำหนดการรับสมัคร JUMC Next","phase":"aw","pillar":"อยากมา","platform":"","status":0,"progress":0,"detail":"📌เกณฑ์การสมัคร\n- อายุ 23 – 27 ปี (เกิดระหว่างปีพ.ศ. 2541-2546) ที่กำลังมองหาประสบการณ์ใหม่ สนใจธุรกิจ หรือมีแผนเรียนต่อ MBA    \n- สำเร็จการศึกษาระดับปริญญาตรี (ไม่จำกัดสาขา)\n- สมัครได้ตั้งแต่วันนี้ – 14  มีนาคม 2569 (เวลา 23.59 น. เท่านั้น !)\n📌รายละเอียดโครงการ\n- ระยะเวลาเรียน: 30 มิถุนายน – 1 สิงหาคม 2569                              \n- เรียนทุกวันจันทร์ - ศุกร์ เวลา 13.00 - 21.00 น.                       \n- ค่าใช้จ่ายในการเรียนตลอดโครงการ 39,590 บาท (รวมภาษีมูลค่าเพิ่มแล้ว) ราคาดังกล่าวรวมทริปศึกษาดูงานต่างจังหวัด 3 วัน 2 คืนแล้ว               \nแล้วมาเป็นส่วนหนึ่งของ JUMC NEXT 19 กันนะ ! \nหมายเหตุ: คณะกรรมการฯ ขอสงวนสิทธิในการเปลี่ยนแปลงกำหนดการ และรายละเอียดตามความเหมาะสมของสถานการณ์ตามนโยบายของคณะฯ\n📲 ติดตามทุกข่าวสารก่อนใคร กดติดตามได้เลย !\nFacebook : JUMC NEXT\nInstagram : jumc.next.official\nTikTok : jumc.next.official\n#JUMCNEXT #JUMCNEXT19 #JUMC #MBA","views":"","saves":"","clicks":"","leads":"","note":""},{"id":"iyvk7gfx","date":"2027-01-11","title":"✨ 5 เรื่องต้องรู้ก่อนสมัคร JUMC Next ✨","phase":"aw","pillar":"อยากมา","platform":"","status":0,"progress":0,"detail":"","views":"","saves":"","clicks":"","leads":"","note":""},{"id":"iba9zwk7","date":"2027-01-16","title":"เปิดรับสมัครวันแรก","phase":"aw","pillar":"อยากมา","platform":"","status":0,"progress":0,"detail":"","views":"","saves":"","clicks":"","leads":"","note":"","ctype":"โพสต์ข้อความ"},{"id":"i4tqoo1s","date":"2027-01-15","title":"ทำไมถึงต้องเรียน JUMC?","phase":"aw","pillar":"อยากมา","platform":"","status":0,"progress":0,"detail":"","views":"","saves":"","clicks":"","leads":"","note":"","ctype":"โพสต์ภาพ"},{"id":"iig5xxub","date":"2027-01-25","title":"ก่อน-หลัง เรียน jumc มีอะไรเปลี่ยนไปบ้าง ?","phase":"aw","pillar":"อยากมา","platform":"","status":0,"progress":0,"detail":"5คน\n1.\n2.\n3.\n4.\n5.\n\n\n1.แนะนำชื่อ ทำอะไร\nเมื่อก่อนเป็นยังไง ตอนนี้เป็นยังไง","views":"","saves":"","clicks":"","leads":"","note":"","ctype":"คลิปสั้น"},{"id":"iwnfel62","date":"2027-02-22","title":"คุณคือ ... คุณได้อะไรจากการมาเรียน jumc ?","phase":"aw","pillar":"อยากมา","platform":"","status":0,"progress":0,"detail":"5 คน\n1.\n2.\n3.\n4.\n5.\n\n1.แนะนำตัว\n2.ทำไมถึงมาเรียน\n3.เรียน Jumc แล้วได้อะไร","views":"","saves":"","clicks":"","leads":"","note":"","ctype":"คลิปสั้น"},{"id":"iwi2uwwb","date":"2027-03-01","title":"class ที่ชอบ / ประทับใจที่สุด เพราะอะไร","phase":"aw","pillar":"อยากมา","platform":"","status":0,"progress":0,"detail":"5 คน\n1.\n2.\n3.\n4.\n5.\n\n1.แนะนำตัว\n2.class ที่ชอบ / ประทับใจที่สุด\n3.เพราะอะไร","views":"","saves":"","clicks":"","leads":"","note":"","ctype":"คลิปสั้น"},{"id":"irkoxlys","date":"2027-02-12","title":"รีวิวคอร์สและการป้ายยาจากใจรุ่นพี่ 1","phase":"aw","pillar":"อยากมา","platform":"","status":0,"progress":0,"detail":"","views":"","saves":"","clicks":"","leads":"","note":"","ctype":"โพสต์ภาพ"},{"id":"ib2u26ex","date":"2027-02-26","title":"รีวิวคอร์สและการป้ายยาจากใจรุ่นพี่ 2","phase":"aw","pillar":"อยากมา","platform":"","status":0,"progress":0,"detail":"","views":"","saves":"","clicks":"","leads":"","note":"","ctype":"โพสต์ภาพ"},{"id":"icvnp4nv","date":"2027-01-29","title":"เรียน JUMC แล้วได้อะไรบ้าง มีกิจกรรมอะไรบ้าง","phase":"aw","pillar":"อยากมา","platform":"","status":0,"progress":0,"detail":"","views":"","saves":"","clicks":"","leads":"","note":""},{"id":"i3r9dlv0","date":"2027-06-25","title":"REMIND first meet JUMC 20","phase":"aw","pillar":"อยากมา","platform":"","status":0,"progress":0,"detail":"","views":"","saves":"","clicks":"","leads":"","note":"","ctype":"โพสต์ข้อความ"}],"ideas":[{"id":"dm0z2ba4","text":"ทุกวันที่ สปีคเกอร์บรรยาย ให้ทำโพสขอบคุณด้วย + สรุปเนื้อหา"}],"marks":{"2027-07-02":"trip","2027-07-03":"trip","2027-07-10":"class","2027-07-17":"class","2027-07-31":"class","2027-07-24":"class","2027-07-30":"event","2027-07-23":"event","2027-07-16":"event","2027-07-09":"event","2027-07-08":"class","2027-07-15":"class","2027-07-22":"class","2027-07-29":"class","2027-07-28":"class","2027-07-21":"class","2027-07-14":"class","2027-07-07":"class","2027-07-06":"class","2027-07-13":"class","2027-07-20":"class","2027-07-27":"class","2027-07-26":"class","2027-07-19":"class","2027-07-12":"class","2027-07-05":"class","2027-07-04":"trip","2027-07-11":"class","2027-07-18":"class","2027-07-25":"class","2027-07-01":"trip","2027-08-01":"event","2027-05-08":"event","2027-05-22":"event","2027-03-15":"event","2027-06-26":"event","2027-03-27":"event","2027-03-22":"event"},"goal":1000}</script>
+<script>
+var KEY="jumc-planner-v1";
+var PH={aw:["📣 Awareness","คนรู้จักค่าย"],co:["🤔 Consideration","คนเข้าใจคุณค่า"],cv:["🔥 Conversion","คนตัดสินใจสมัคร"],ex:["🎪 Experience","สร้างหลักฐานให้รุ่นต่อไป"],pr:["🎬 ถ่ายทำ".replace("ถ่ายทำ","ถ่ายทำ"),"เก็บวัตถุดิบ"]};
+var ST=["⏳ ยังไม่ได้ลง","⏳ ยังไม่ได้ลง","⏳ ยังไม่ได้ลง","⏳ ยังไม่ได้ลง","✅ ลงแล้ว"];
+var CT=["คลิปสั้น","คลิปยาว","คลิปสัมภาษณ์","โพสต์ภาพ","Carousel","Story","Live","โพสต์ข้อความ"],CI=["📱","📺","🎙️","🖼️","🗂️","⭕","🔴","✍️"];
+function ctIcon(x){var i=CT.indexOf(x.ctype);return i<0?"":CI[i]+" "}
+var PIL=["อยากมา","ได้ประโยชน์","ได้อะไรกลับไป","คุ้มค่า"];
+var MO=["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+var phF="all",stF="all",cur=null,delArm=false;
+
+function mk(d,t,ph,pil,pf,s,p,det){return{id:"i"+Math.random().toString(36).slice(2,9),date:d,title:t,phase:ph,pillar:pil,platform:pf,status:s,progress:p,detail:det||"",views:"",saves:"",clicks:"",leads:"",note:""}}
+function seed(){return[
+mk("2026-12-15","วันถ่ายที่ JUMC trip","pr","ได้อะไรกลับไป","กล้อง/มือถือ",0,0,"คำถามสัมภาษณ์:\n1. ถ้าคุณคือ ... คุณได้อะไรจากการมาเรียน JUMC?\n2. ก่อน-หลังเรียน มีอะไรเปลี่ยนไป?\n3. สิ่งที่ประทับใจ?\n4. คุ้มไหมกับ 1 เดือนเต็ม เพราะอะไร?\n5. ตัวเลข 1 เดือน (กี่วิทยากร กี่ชั่วโมง กี่บริษัท)\n6. เรื่องที่เอากลับไปใช้ได้ทันที\n7. ก่อนมากลัวอะไร vs ความจริง\n8. เพื่อนที่ได้จากค่าย\n9. ช่วงเวลาที่ไม่คาดคิด\n10. ฝากถึงคนที่กำลังลังเล\n\nอย่าลืม: ขอ consent, เก็บ B-roll, จดอาชีพของแต่ละคน"),
+mk("2027-01-05","Teaser: 1 เดือนในค่าย JUMC NEXT","aw","อยากมา","TikTok / Reels",0,0,"คลิปสั้นตัดเร็ว ภาพบรรยากาศ ฮุก 3 วินาทีแรก"),
+mk("2027-01-12","ค่ายนี้ไม่ใช่ห้องเรียนที่คุณคิด","aw","อยากมา","TikTok / Reels",0,0,"เล่าด้วยภาพว่าต่างจากห้องเรียนทั่วไปอย่างไร"),
+mk("2027-01-19","ก่อน-หลังเรียน JUMC (สัมภาษณ์ศิษย์เก่า)","aw","ได้อะไรกลับไป","YouTube / Reels",0,0,"ตัดจากสัมภาษณ์ข้อ 2"),
+mk("2027-01-26","ถ้าคุณคือเจ้าของธุรกิจ คุณได้อะไรจากค่าย?","aw","ได้ประโยชน์","Reels",0,0,"montage คำตอบหลายคนตามอาชีพ"),
+mk("2027-02-09","POV: วันแรกในค่าย","aw","อยากมา","TikTok",0,0,""),
+mk("2027-03-02","สอนฟรี 60 วินาทีจากวิทยากร","co","ได้ประโยชน์","TikTok / Shorts",0,0,"ให้วิทยากรสอน 1 เทคนิคสั้นๆ"),
+mk("2027-03-16","Speaker Spotlight: วิทยากรคนที่ 1","co","ได้ประโยชน์","Reels / โพสต์ภาพ",0,0,"ใครคือเขา ทำอะไรมา จะสอนอะไร"),
+mk("2027-04-06","เพื่อนจากค่าย ตอนนี้ไปถึงไหนกันแล้ว","co","ได้อะไรกลับไป","YouTube / Reels",0,0,"โชว์ว่า network เป็นของจริง"),
+mk("2027-05-04","ค่าเรียนนี้ได้อะไรบ้าง","cv","คุ้มค่า","Carousel / Reels",0,0,"แจกแจงเนื้อหา ดูงาน เครือข่าย ประสบการณ์ ด้วยตัวเลขจริง"),
+mk("2027-05-18","คุ้มไหมกับ 1 เดือนเต็ม","cv","คุ้มค่า","YouTube / Reels",0,0,"ตัดจากสัมภาษณ์ข้อ 4 ตอบข้อกังวลเรื่องเงินและเวลา"),
+mk("2027-06-08","FAQ ตอบข้อกังวลก่อนสมัคร","cv","คุ้มค่า","Reels / Story",0,0,"ไม่มีพื้นฐานได้ไหม ต้องลางานไหม ใช้ได้จริงไหม"),
+mk("2027-06-22","ใกล้ปิดรับสมัคร","cv","คุ้มค่า","ทุกช่องทาง",0,0,"ใส่วันปิดรับสมัครจริงและ CTA"),
+mk("2027-07-10","Recap ระหว่างค่าย","ex","อยากมา","Reels / Story",0,0,"เก็บ testimonial สำหรับรุ่นถัดไป")]}
+function load(){try{var s=localStorage.getItem(KEY);if(s){var a=JSON.parse(s);if(Array.isArray(a))return a}}catch(e){}return seed()}
+function save(){touch();try{localStorage.setItem(KEY,JSON.stringify(items))}catch(e){}}
+var items=load();
+items.forEach(function(x){if(x.status!=4){x.status=0;x.progress=0}else x.progress=100});
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function $(i){return document.getElementById(i)}
+function sorted(){return items.slice().sort(function(a,b){return (a.date||"9999").localeCompare(b.date||"9999")})}
+function num(v){var n=parseFloat(v);return isNaN(n)?0:n}
+function fmt(n){return n.toLocaleString("th-TH")}
+
+function render(){view_sync();renderGoal();
+  var all=sorted(),posted=all.filter(function(x){return x.status==4}).length;
+  var avg=all.length?Math.round(all.reduce(function(s,x){return s+num(x.progress)},0)/all.length):0;
+  var v=0,l=0;all.forEach(function(x){v+=num(x.views);l+=num(x.leads)});
+  $("stats").innerHTML=[[all.length,"📝 คอนเทนต์ทั้งหมด"],[posted+"/"+all.length,"✅ ลงแล้ว"],[avg+"%","🚀 ความคืบหน้ารวม"],[fmt(v),"👀 ยอดวิวรวม"],[fmt(l),"🙋 ผู้สมัคร/lead รวม"]].map(function(a){return '<div class="stat"><b>'+a[0]+'</b><span>'+a[1]+'</span></div>'}).join("");
+  $("strip").innerHTML=all.map(function(x){return '<i data-s="'+x.status+'" data-id="'+x.id+'" title="'+esc(x.title)+'"></i>'}).join("");
+  var ch='<button class="chip" aria-pressed="'+(phF=="all")+'" data-ph="all">ทุกเฟส</button>';
+  Object.keys(PH).forEach(function(k){ch+='<button class="chip" aria-pressed="'+(phF==k)+'" data-ph="'+k+'">'+PH[k][0]+'</button>'});
+  $("chips").innerHTML=ch;
+  var f=all.filter(function(x){return (phF=="all"||x.phase==phF)&&(stF=="all"||x.status==stF)});
+  if(!f.length){$("list").innerHTML='<div class="empty">ไม่มีรายการในตัวกรองนี้ กด “เพิ่มคอนเทนต์” เพื่อเริ่มต้น</div>';return}
+  var h="",last="";
+  f.forEach(function(x){
+    var d=x.date?new Date(x.date+"T00:00:00"):null,key=d?MO[d.getMonth()]+" "+d.getFullYear():"ยังไม่กำหนดวัน";
+    if(key!=last){h+="<h2>"+key+"</h2>";last=key}
+    h+='<button class="item" style="--c:var(--'+x.phase+')" data-id="'+x.id+'"><div class="d">'+(d?'<b>'+d.getDate()+'</b><small>'+MO[d.getMonth()]+'</small>':'<small>ไม่ระบุ</small>')+'</div><div><div class="t">'+esc(x.title||"(ไม่มีชื่อ)")+'</div><div class="meta"><span class="tag" style="--c:var(--'+x.phase+')">'+PH[x.phase][0]+'</span>'+(x.ctype?'<span class="tag" style="--c:var(--blue)">'+ctIcon(x)+esc(x.ctype)+'</span>':'')+'<span>'+esc(x.pillar)+'</span><span>'+esc(x.platform)+'</span><span>'+ST[x.status]+'</span>'+shootTag(x)+(num(x.views)?'<span>'+fmt(num(x.views))+' วิว</span>':'')+'</div><div class="prog"><i style="width:'+num(x.progress)+'%"></i></div></div></button>'});
+  $("list").innerHTML=h;
+}
+
+function setTheme(t){document.documentElement.setAttribute("data-theme",t);$("th").textContent=t=="light"?"🌙 โหมดกลางคืน":"☀️ โหมดกลางวัน";try{localStorage.setItem("jumc-theme2",t)}catch(e){}}
+var t0=null;try{t0=localStorage.getItem("jumc-theme2")}catch(e){}
+if(!t0)t0="light";
+setTheme(t0);
+$("th").addEventListener("click",function(){setTheme(document.documentElement.getAttribute("data-theme")=="light"?"dark":"light")});
+var K2="jumc-ideas-v1",K3="jumc-marks-v1";
+function ldx(k,d){try{var s=localStorage.getItem(k);if(s){var v=JSON.parse(s);if(v&&typeof v=="object")return v}}catch(e){}return d}
+var ideas=ldx(K2,null),marks=ldx(K3,{});
+if(!Array.isArray(ideas))ideas=["Behind the scene การเตรียมหลักสูตร","ถามผู้จัดว่าทำไมถึงอยากจัดค่ายนี้","ถ่าย 1 วันเต็มตั้งแต่เช้าถึงเย็น","เทียบความคุ้ม กับการหาความรู้และคอนเน็กชันเอง"].map(function(t,i){return{id:"d"+i+Math.random().toString(36).slice(2,6),text:t}});
+function saveX(){touch();try{localStorage.setItem(K2,JSON.stringify(ideas));localStorage.setItem(K3,JSON.stringify(marks))}catch(e){}}
+function moveIdea(id,date){var z=ideas.filter(function(q){return q.id==id})[0];if(!z)return;var n=mk(date,z.text,"aw","อยากมา","",0,0,"");n.ctype=z.ctype||"";items.push(n);ideas=ideas.filter(function(q){return q.id!=id});save();saveX();var m=parseInt(date.slice(5,7),10)-1;if(date.slice(0,4)=="2027"&&m>=0&&m<8)calM=m;render()}
+$("cal").addEventListener("click",function(e){var t=e.target.closest("button");if(!t)return;
+  if(t.classList.contains("dn")){var k=t.getAttribute("data-day"),c=marks[k]||"",nx=c==""?"class":(c=="class"?"trip":(c=="trip"?"event":""));if(nx)marks[k]=nx;else delete marks[k];saveX();renderCal();return}
+  if(t.id=="add-idea"){var v=$("in-idea").value.trim();if(!v)return;ideas.unshift({id:"d"+Math.random().toString(36).slice(2,9),text:v});saveX();renderCal();return}
+  if(t.classList.contains("mv")){var dt=t.closest(".idea").querySelector("[data-idate]").value;if(dt)moveIdea(t.getAttribute("data-iid"),dt);return}
+  if(t.classList.contains("di")){var id=t.getAttribute("data-iid");ideas=ideas.filter(function(z){return z.id!=id});saveX();renderCal()}});
+$("cal").addEventListener("input",function(e){var ti=e.target.getAttribute("data-itext"),ty=e.target.getAttribute("data-ictype");if(ti){ideas.forEach(function(z){if(z.id==ti)z.text=e.target.value});saveX()}else if(ty){ideas.forEach(function(z){if(z.id==ty)z.ctype=e.target.value});saveX()}});
+$("cal").addEventListener("keydown",function(e){if(e.key=="Enter"&&e.target.id=="in-idea"){e.preventDefault();$("add-idea").click()}});
+$("cal").addEventListener("dragstart",function(e){var g=e.target.closest(".grip");if(!g)return;e.dataTransfer.setData("text/plain",g.getAttribute("data-iid"));e.dataTransfer.effectAllowed="move"});
+$("cal").addEventListener("dragstart",function(e){var v=e.target.closest(".ev[draggable]");if(!v)return;e.dataTransfer.setData("text/plain","ev:"+v.getAttribute("data-id"));e.dataTransfer.effectAllowed="move"});
+$("cal").addEventListener("dragover",function(e){var c=e.target.closest(".cd[data-day]");if(!c)return;e.preventDefault();c.classList.add("dov")});
+$("cal").addEventListener("dragleave",function(e){var c=e.target.closest(".cd");if(c)c.classList.remove("dov")});
+$("cal").addEventListener("drop",function(e){var c=e.target.closest(".cd[data-day]");if(!c)return;e.preventDefault();c.classList.remove("dov");var id=e.dataTransfer.getData("text/plain");if(!id)return;if(id.indexOf("ev:")==0){var it=items.filter(function(q){return q.id==id.slice(3)})[0];if(it){it.date=c.getAttribute("data-day");save();render()}}else moveIdea(id,c.getAttribute("data-day"))});
+var KG="jumc-goal-v1",goal=1000;
+try{var g0=parseInt(localStorage.getItem(KG),10);if(g0>0)goal=g0}catch(e){}
+function renderGoal(){
+  var el=$("goal"),s=0;items.forEach(function(x){s+=num(x.leads)});
+  if(!$("gl-in")){el.innerHTML='<div class="gl-top"><div class="gl-t">🎯 เป้าหมายผู้สมัคร</div><label class="gl-e">ปรับเป้า <input type="number" min="1" id="gl-in" value="'+goal+'"> คน</label></div><div class="gl-n"><b id="gl-s"></b> / <span id="gl-g"></span> คน <span id="gl-em"></span> <span id="gl-p"></span></div><div class="gl-bar"><i id="gl-b"></i></div><div class="gl-ms" id="gl-ms"></div><div class="gl-note" id="gl-note"></div>'}
+  var p=Math.min(100,Math.round(s/goal*100));
+  $("gl-s").textContent=fmt(s);$("gl-g").textContent=fmt(goal);$("gl-p").textContent=p+"%";
+  $("gl-em").textContent=s>=goal?"🎉":(p>=75?"🔥":(p>=50?"🚀":(p>=25?"💪":"🌱")));
+  $("gl-b").style.width=p+"%";
+  $("gl-ms").innerHTML=[25,50,75,100].map(function(m){return '<span class="ms'+(p>=m?" on":"")+'">'+(m==100?"🏆":"⭐")+" "+m+"% ("+fmt(Math.round(goal*m/100))+")</span>"}).join("");
+  $("gl-note").textContent=s>=goal?"ถึงเป้าแล้ว 🎉 เกินเป้า "+fmt(s-goal)+" คน":"เหลืออีก "+fmt(goal-s)+" คน • นับจากช่อง “ผู้สมัคร/lead” ของทุกคอนเทนต์รวมกัน";
+}
+$("goal").addEventListener("input",function(e){if(e.target.id!="gl-in")return;var v=parseInt(e.target.value,10);if(v>0){goal=v;touch();try{localStorage.setItem(KG,String(v))}catch(x){}renderGoal()}});
+var HOL={"2027-01-01":"วันขึ้นปีใหม่","2027-02-21":"วันมาฆบูชา","2027-02-22":"ชดเชยวันมาฆบูชา","2027-04-06":"วันจักรี","2027-04-13":"วันสงกรานต์","2027-04-14":"วันสงกรานต์","2027-04-15":"วันสงกรานต์","2027-05-01":"วันแรงงาน","2027-05-03":"ชดเชยวันแรงงาน","2027-05-04":"วันฉัตรมงคล","2027-05-20":"วันวิสาขบูชา","2027-06-03":"วันเฉลิมพระชนมพรรษา สมเด็จพระราชินี","2027-07-18":"วันอาสาฬหบูชา","2027-07-19":"ชดเชยวันอาสาฬหบูชา","2027-07-28":"วันเฉลิมพระชนมพรรษา ร.10","2027-08-12":"วันแม่แห่งชาติ","2027-10-13":"วันนวมินทรมหาราช","2027-10-23":"วันปิยมหาราช","2027-10-25":"ชดเชยวันปิยมหาราช","2027-12-05":"วันพ่อแห่งชาติ","2027-12-06":"ชดเชยวันพ่อ/วันชาติ","2027-12-10":"วันรัฐธรรมนูญ","2027-12-31":"วันสิ้นปี"};
+var EMB=null;try{EMB=JSON.parse($("embedded").textContent)}catch(e){}
+function touch(){try{localStorage.setItem("jumc-ts",String(Date.now()))}catch(e){}}
+function snap(){return{v:1,savedAt:Date.now(),items:items,ideas:ideas,marks:marks,goal:goal}}
+function applyData(d){if(!d||!Array.isArray(d.items))return false;
+  items=d.items.map(function(x){x.status=x.status==4?4:0;x.progress=x.status==4?100:0;return x});
+  if(Array.isArray(d.ideas))ideas=d.ideas;if(d.marks&&typeof d.marks=="object")marks=d.marks;
+  var g=parseInt(d.goal,10);if(g>0)goal=g;
+  save();saveX();try{localStorage.setItem(KG,String(goal))}catch(e){}
+  var gi=$("gl-in");if(gi)gi.value=goal;return true}
+(function(){var ts=0;try{ts=parseInt(localStorage.getItem("jumc-ts"),10)||0}catch(e){}if(EMB&&(EMB.savedAt||0)>ts)applyData(EMB)})();
+function ioMsg(t){$("io-msg").textContent=t}
+function fb(name,data,mime){try{var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([data],{type:mime}));a.download=name;document.body.appendChild(a);a.click();a.remove();ioMsg("ส่งไฟล์ให้เบราว์เซอร์แล้ว ✅")}catch(e){ioMsg("ดาวน์โหลดไม่ได้ในมุมมองนี้")}}
+function dl(name,data,mime){
+  if(typeof claude=="undefined"||!claude.use){fb(name,data,mime);return}
+  claude.use("downloads").then(function(d){
+    if(!d){ioMsg("การดาวน์โหลดใช้ไม่ได้ในมุมมองนี้ ลองเปิดจากหน้าอาร์ติแฟกต์โดยตรง");return}
+    return d.save({filename:name,data:data}).then(function(){ioMsg("บันทึกไฟล์แล้ว ✅")},function(e){ioMsg(e&&e.code=="declined"?"ยกเลิกการบันทึก":"บันทึกไฟล์ไม่สำเร็จ")})
+  },function(){ioMsg("บันทึกไฟล์ไม่สำเร็จ")})}
+var WEB="https://claude.ai/artifact/QKZH2mGQFT8VBtrfwvj2eS";
+function nsHtml(){var L=sorted().map(function(x){return "<li>"+esc(x.date||"-")+" · "+ctIcon(x)+esc(x.title||"")+(x.status==4?" ✅":"")+"</li>"}).join("");return '<div style="padding:12px;margin:12px 0;border:2px solid #D81B7A;border-radius:10px;background:#fff;color:#1C2038;font-family:sans-serif"><b>⚠️ หน้านี้ถูกเปิดในมุมมองที่ไม่รันสคริปต์ (เช่น พรีวิวไฟล์) จึงกดปุ่มไม่ได้</b><br>เปิดเวอร์ชันเว็บเพื่อดูและแก้ไข: <a href="https://claude.ai/artifact/QKZH2mGQFT8VBtrfwvj2eS">เปิดเว็บ JUMC NEXT Planner</a><ul>'+L+'</ul></div>'}
+function buildHtml(){
+  var c=document.documentElement.cloneNode(true);
+  ["goal","stats","strip","chips","list","cal","pan"].forEach(function(id){var e=c.querySelector("#"+id);if(e)e.innerHTML=""});
+  var ov=c.querySelector("#ov");if(ov)ov.className="ov";
+  var cl=c.querySelector("#cal");if(cl)cl.setAttribute("hidden","");
+  var lt=c.querySelector("#list");if(lt)lt.removeAttribute("hidden");
+  var mg=c.querySelector("#io-msg");if(mg)mg.textContent="";
+  c.querySelectorAll("base").forEach(function(b){b.remove()});
+  c.querySelectorAll("script").forEach(function(s){if(s.id=="embedded")return;if(s.src||s.textContent.indexOf("jumc-planner-v1")<0)s.remove()});
+  var ns=c.querySelector("noscript");if(ns)ns.textContent=nsHtml();
+  c.querySelector("#embedded").textContent=JSON.stringify(snap()).replace(/</g,String.fromCharCode(92)+"u003c");
+  return "<!DOCTYPE html>\n"+c.outerHTML}
+$("b-html").addEventListener("click",function(){dl("jumc-next-planner.html",buildHtml(),"text/html")});
+$("b-json").addEventListener("click",function(){dl("jumc-planner-data.json",JSON.stringify(snap(),null,1),"application/json")});
+$("b-imp").addEventListener("click",function(){$("f-imp").click()});
+$("f-imp").addEventListener("change",function(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var d=JSON.parse(r.result);if(applyData(d)){render();ioMsg("นำเข้าข้อมูลแล้ว ✅")}else ioMsg("ไฟล์นี้ไม่ใช่ไฟล์ข้อมูลของ planner")}catch(x){ioMsg("อ่านไฟล์ไม่ได้")}};r.readAsText(f);e.target.value=""});
+var view="list",calM=0;
+function view_sync(){var c=view=="cal";$("list").hidden=c;$("cal").hidden=!c;$("chips").hidden=c;$("st").hidden=c;$("vl").setAttribute("aria-pressed",String(!c));$("vc").setAttribute("aria-pressed",String(c));if(c)renderCal()}
+function renderCal(){
+  var y=2027,first=new Date(y,calM,1).getDay(),dim=new Date(y,calM+1,0).getDate(),h="";
+  h+='<div class="bar">'+MO.slice(0,8).map(function(m,i){return '<button class="chip" data-m="'+i+'" aria-pressed="'+(i==calM)+'">'+m+' 2027</button>'}).join("")+'</div>';
+  var mp=y+"-"+(calM<9?"0":"")+(calM+1)+"-",nc=0,nt=0,ne=0,nh=Object.keys(HOL).filter(function(k){return k.indexOf(mp)==0}).length;Object.keys(marks).forEach(function(k){if(k.indexOf(mp)==0){if(marks[k]=="class")nc++;else if(marks[k]=="trip")nt++;else ne++}});
+  h+='<div class="legend"><em class="lc">📚 วันเรียน '+nc+' วัน</em><em class="lt">🏖️ วันไปเที่ยว '+nt+' วัน</em><em class="le">🎉 วันกิจกรรม '+ne+' วัน</em><em class="lh">🎌 วันหยุด '+nh+' วัน</em><span>กดตัวเลขวันที่เพื่อมาร์ก เรียน / ไปเที่ยว / กิจกรรม / ล้าง</span></div>';
+  h+='<div class="cg">'+["อา","จ","อ","พ","พฤ","ศ","ส"].map(function(w){return '<div class="cw">'+w+'</div>'}).join("");
+  for(var i=0;i<first;i++)h+='<div class="cd o"></div>';
+  for(var d=1;d<=dim;d++){
+    var key=y+"-"+(calM<9?"0":"")+(calM+1)+"-"+(d<10?"0":"")+d;
+    var mk_=marks[key]||"";
+    h+='<div class="cd'+(mk_?' m-'+mk_:'')+(HOL[key]?' hol':'')+'" data-day="'+key+'"><button class="dn" data-day="'+key+'" aria-label="มาร์กวันที่ '+d+'">'+d+'</button>'+(mk_?'<small class="ml">'+({"class":"📚 เรียน","trip":"🏖️ เที่ยว","event":"🎉 กิจกรรม"}[mk_])+'</small>':'')+(HOL[key]?'<div class="hl" title="'+HOL[key]+'">🎌 '+HOL[key]+'</div>':'')+'<button class="plus" data-day="'+key+'" aria-label="เพิ่มคอนเทนต์วันที่ '+d+'">+</button>';
+    sorted().forEach(function(x){if(x.date==key)h+='<button class="ev" draggable="true" style="--c:var(--'+x.phase+')" data-id="'+x.id+'" title="'+esc(x.title)+'">'+(x.status==4?"✓ ":"")+ctIcon(x)+esc(x.title||"(ไม่มีชื่อ)")+'</button>'});
+    sorted().forEach(function(x){if(x.shootFrom&&key>=x.shootFrom&&key<=(x.shootTo||x.shootFrom))h+='<button class="ev sh" data-id="'+x.id+'" title="ช่วงถ่าย: '+esc(x.title)+'">🎬 '+esc(x.title||"")+'</button>'});
+    var ln=0;items.forEach(function(x){if(x.date==key)ln+=num(x.leads)});
+    if(ln>0)h+='<span class="ap" title="ผู้สมัคร '+fmt(ln)+' คน">🙋 '+fmt(ln)+'</span>';
+    h+='</div>';
+  }
+  h+='</div>';
+  var out=items.filter(function(x){return !x.date||x.date.slice(0,4)!="2027"||parseInt(x.date.slice(5,7),10)>8}).length;
+  if(out)h+='<p class="sub" style="margin-top:12px">มี '+out+' รายการอยู่นอกช่วง ม.ค. ถึง ส.ค. 2027 ดูได้ในมุมมองรายการ</p>';
+  var dd=y+"-"+(calM<9?"0":"")+(calM+1)+"-01";
+  h+='<h2 style="margin-top:28px">💡 โน้ตไอเดียคอนเทนต์</h2><p class="sub" style="margin:0 0 10px">จดไอเดียไว้ก่อน แล้วลากที่ ⠿ ไปวางบนวันในปฏิทิน หรือเลือกวันแล้วกด “ใส่ในปฏิทิน”</p><div class="bar"><input id="in-idea" placeholder="พิมพ์ไอเดียแล้วกดเพิ่ม" style="flex:1;min-width:200px"><button class="btn" id="add-idea">เพิ่มไอเดีย</button></div>';
+  h+=ideas.length?ideas.map(function(z){return '<div class="idea"><span class="grip" draggable="true" data-iid="'+z.id+'" title="ลากไปวางบนวัน">⠿</span><div><textarea data-itext="'+z.id+'" aria-label="ไอเดีย">'+esc(z.text)+'</textarea><div class="ia"><select data-ictype="'+z.id+'" aria-label="ประเภท"><option value="">ประเภท</option>'+opts(CT,z.ctype)+'</select><input type="date" data-idate value="'+dd+'" aria-label="วันที่จะใส่"><button class="btn sm mv" data-iid="'+z.id+'">📌 ใส่ในปฏิทิน</button><button class="btn ghost sm di" data-iid="'+z.id+'">ลบ</button></div></div></div>'}).join(""):'<div class="empty">ยังไม่มีไอเดีย พิมพ์ไอเดียแรกด้านบนได้เลย</div>';
+  $("cal").innerHTML=h;
+}
+$("cal").addEventListener("click",function(e){var t=e.target.closest("button");if(!t)return;
+  if(t.hasAttribute("data-m")){calM=parseInt(t.getAttribute("data-m"),10);renderCal();return}
+  if(t.classList.contains("ev")){openP(t.getAttribute("data-id"));return}
+  if(t.classList.contains("plus")){var n=mk(t.getAttribute("data-day"),"คอนเทนต์ใหม่","aw","อยากมา","",0,0,"");items.push(n);save();render();openP(n.id)}});
+$("vl").addEventListener("click",function(){view="list";render()});
+$("vc").addEventListener("click",function(){view="cal";render()});
+function shootTag(x){if(!x.shootFrom)return"";function f(s){var d=new Date(s+"T00:00:00");return d.getDate()+" "+MO[d.getMonth()]}var t=(x.shootTo&&x.shootTo!=x.shootFrom)?f(x.shootFrom)+" – "+f(x.shootTo):f(x.shootFrom);return '<span>🎬 ถ่าย '+t+'</span>'}
+function opts(arr,sel,val){return arr.map(function(a,i){var v=val?val(a,i):a;return '<option value="'+v+'"'+(String(v)==String(sel)?" selected":"")+'>'+esc(a)+'</option>'}).join("")}
+function openP(id){
+  cur=items.filter(function(x){return x.id==id})[0];if(!cur)return;delArm=false;
+  var x=cur;
+  $("pan").innerHTML='<div class="bar"><h3>📝 รายละเอียดคอนเทนต์</h3><span class="sp"></span><button class="btn ghost" id="cl">ปิด</button></div>'
+  +'<label for="f-title">ชื่อคอนเทนต์</label><input id="f-title" data-f="title" value="'+esc(x.title)+'">'
+  +'<div><label for="f-date">วันที่ลง</label><input type="date" id="f-date" data-f="date" value="'+esc(x.date)+'"></div>'
+  +''
+  +'<label for="f-ctype">ประเภทโพสต์ / คลิป</label><select id="f-ctype" data-f="ctype"><option value="">ยังไม่ระบุ</option>'+opts(CT,x.ctype)+'</select>'
+  +''
+  +''
+  +''
+  +'<label for="f-detail">รายละเอียด / สคริปต์ / ไอเดีย</label><textarea id="f-detail" data-f="detail" style="min-height:160px">'+esc(x.detail)+'</textarea>'
+  +'<div class="sec">📈 ความคืบหน้า</div>'
+  +'<label for="f-status">สถานะ</label><select id="f-status" data-f="status"><option value="0"'+(x.status==4?"":" selected")+'>⏳ ยังไม่ได้ลง</option><option value="4"'+(x.status==4?" selected":"")+'>✅ ลงแล้ว</option></select>'
+  +''
+  +'<div class="sec">🏆 ผลลัพธ์หลังลง</div>'
+  +'<div class="row"><div><label for="f-views">ยอดวิว</label><input type="number" min="0" id="f-views" data-f="views" value="'+esc(x.views)+'"></div>'
+  +'<div><label for="f-saves">เซฟ/แชร์</label><input type="number" min="0" id="f-saves" data-f="saves" value="'+esc(x.saves)+'"></div>'
+  +'<div><label for="f-clicks">คลิกลิงก์</label><input type="number" min="0" id="f-clicks" data-f="clicks" value="'+esc(x.clicks)+'"></div>'
+  +'<div><label for="f-leads">ผู้สมัคร/lead</label><input type="number" min="0" id="f-leads" data-f="leads" value="'+esc(x.leads)+'"></div></div>'
+  +'<label for="f-note">บันทึกสิ่งที่เรียนรู้</label><textarea id="f-note" data-f="note" placeholder="เช่น ฮุกแบบไหนเวิร์ก คนถามอะไรในคอมเมนต์">'+esc(x.note)+'</textarea>'
+  +'<div class="acts"><button class="btn" id="done">เสร็จแล้ว</button><span class="sp"></span><button class="btn danger" id="del">ลบรายการ</button></div>';
+  $("ov").classList.add("on");$("f-title").focus();
+}
+function closeP(){$("ov").classList.remove("on");cur=null;render()}
+
+$("pan").addEventListener("input",function(e){
+  var f=e.target.getAttribute("data-f");if(!f||!cur)return;
+  cur[f]=e.target.value;
+  if((f=="shootFrom"||f=="shootTo")&&cur.shootFrom&&cur.shootTo&&cur.shootTo<cur.shootFrom){
+    if(f=="shootFrom"){cur.shootTo=cur.shootFrom;$("f-shootTo").value=cur.shootTo}else{cur.shootFrom=cur.shootTo;$("f-shootFrom").value=cur.shootFrom}}
+  if(f=="progress")$("pv").textContent=e.target.value;
+  if(f=="status"){cur.status=parseInt(e.target.value,10);cur.progress=cur.status==4?100:0}
+  save();
+});
+$("pan").addEventListener("click",function(e){
+  var id=e.target.id;
+  if(id=="cl"||id=="done")closeP();
+  if(id=="del"){if(!delArm){delArm=true;e.target.textContent="กดอีกครั้งเพื่อลบ";return}
+    items=items.filter(function(x){return x!==cur});save();closeP()}
+});
+$("ov").addEventListener("click",function(e){if(e.target.id=="ov")closeP()});
+document.addEventListener("keydown",function(e){if(e.key=="Escape"&&cur)closeP()});
+$("list").addEventListener("click",function(e){var b=e.target.closest(".item");if(b)openP(b.getAttribute("data-id"))});
+$("strip").addEventListener("click",function(e){var b=e.target.closest("i");if(b)openP(b.getAttribute("data-id"))});
+$("chips").addEventListener("click",function(e){var b=e.target.closest(".chip");if(b){phF=b.getAttribute("data-ph");render()}});
+$("st").innerHTML='<option value="all">ทุกสถานะ</option><option value="0">⏳ ยังไม่ได้ลง</option><option value="4">✅ ลงแล้ว</option>';
+$("st").addEventListener("change",function(){stF=this.value;render()});
+$("add").addEventListener("click",function(){
+  var n=mk(new Date().toISOString().slice(0,10),"คอนเทนต์ใหม่","aw","อยากมา","",0,0,"");
+  items.push(n);save();render();openP(n.id)});
+render();
+</script>
+</body>
+</html>
